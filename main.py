@@ -1,26 +1,21 @@
 import os
 from fastapi import FastAPI, Request
-import requests
+from google import genai
 
 app = FastAPI()
 
-DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions"
-DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
+client = genai.Client()
 
 @app.post("/")
 async def main(request: Request):
     body = await request.json()
     user_text = body["request"]["original_utterance"]
 
-    response = requests.post(
-        DEEPSEEK_API_URL,
-        headers={"Authorization": f"Bearer {DEEPSEEK_API_KEY}"},
-        json={
-            "model": "deepseek-chat",
-            "messages": [{"role": "user", "content": user_text}],
-        }
+    response = client.models.generate_content(
+        model="gemini-2.0-flash",
+        contents=user_text
     )
-    answer = response.json()["choices"][0]["message"]["content"]
+    answer = response.text
 
     return {
         "version": body["version"],
