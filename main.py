@@ -12,7 +12,7 @@ async def main(request: Request):
     user_text = body["request"]["original_utterance"]
 
     response = client.models.generate_content(
-        model="gemini-2.0-flash",
+        model="gemini-2.5-flash",
         contents=user_text
     )
     answer = response.text
